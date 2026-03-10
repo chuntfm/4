@@ -5,11 +5,11 @@
 # URLs ending in .svg/.png/.jpg/etc are auto-rendered as images.
 
 slot1:
-  - https://www.chunt.org/images/chuntfm_eye_fixed_wmargin.svg
-  - https://www.rumundco.de/media/f7/bb/62/1675680119/design-ohne-titel-10_6fa8bdcf6229c648.png
-  - https://i.ibb.co/HHXRscw/chabskini.png
-  - https://i.ibb.co/3sTMQGF/chabsromance.png
-  - https://c.tenor.com/P5hUQuAEvPIAAAAi/crazed-dancing-alien-corrupted-dancing-alien.gif
+  - images/chuntfm_eye_fixed_wmargin.svg
+  - images/nusacana.png
+  - images/chabskini.png
+  - images/chabsromance.png
+  - images/alien.gif
   - "Tantric"
   - "Big"
   - "Chabs'"
@@ -43,11 +43,11 @@ slot1:
   - "Radio"
 
 slot2:
-  - https://www.chunt.org/images/chuntfm_eye_fixed_wmargin.svg
-  - https://www.rumundco.de/media/f7/bb/62/1675680119/design-ohne-titel-10_6fa8bdcf6229c648.png
-  - https://i.ibb.co/HHXRscw/chabskini.png
-  - https://i.ibb.co/3sTMQGF/chabsromance.png
-  - https://c.tenor.com/P5hUQuAEvPIAAAAi/crazed-dancing-alien-corrupted-dancing-alien.gif
+  - images/chuntfm_eye_fixed_wmargin.svg
+  - images/nusacana.png
+  - images/chabskini.png
+  - images/chabsromance.png
+  - images/alien.gif
   - "Woated"
   - "Yunky"
   - "Pingin"
@@ -76,11 +76,11 @@ slot2:
   - "Morning"
 
 slot3:
-  - https://www.chunt.org/images/chuntfm_eye_fixed_wmargin.svg
-  - https://www.rumundco.de/media/f7/bb/62/1675680119/design-ohne-titel-10_6fa8bdcf6229c648.png
-  - https://i.ibb.co/HHXRscw/chabskini.png
-  - https://i.ibb.co/3sTMQGF/chabsromance.png
-  - https://c.tenor.com/P5hUQuAEvPIAAAAi/crazed-dancing-alien-corrupted-dancing-alien.gif
+  - images/chuntfm_eye_fixed_wmargin.svg
+  - images/nusacana.png
+  - images/chabskini.png
+  - images/chabsromance.png
+  - images/alien.gif
   - "Tunas"
   - "Bjiertes"
   - "Bins"
