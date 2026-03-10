@@ -977,7 +977,7 @@ function renderSchedule() {
     const dayStr = start.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
     const timeStr = formatTime(start) + ' - ' + formatTime(stop);
     return '<div class="schedule-item' + (isNow ? ' schedule-now' : '') + '">'
-      + '<span class="schedule-time">' + (isNow ? '> ' : '') + dayStr + ' ' + timeStr + '</span>'
+      + '<span class="schedule-time">' + (isNow ? '> NOW ' : dayStr + ' ') + timeStr + '</span>'
       + '<span class="schedule-title">' + escapeHtml(e.title || 'Untitled') + '</span>'
       + '</div>';
   }).join('');
