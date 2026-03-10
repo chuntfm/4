@@ -559,7 +559,10 @@
   <div class="card">
     <div class="card-label">Schedule <span id="tzLabel"></span></div>
     <div id="schedule">
-      <div class="schedule-loading">loading schedule...</div>
+      <div id="schedule-fake"></div>
+      <div id="schedule-real">
+        <div class="schedule-loading">loading schedule...</div>
+      </div>
     </div>
   </div>
 
@@ -773,7 +776,7 @@ function showResult(indices) {
   lastResult = indices;
   document.getElementById('saveBtn').style.visibility = 'visible';
 
-  const schedule = document.getElementById('schedule');
+  const schedule = document.getElementById('schedule-fake');
   const titleHtml = indices.map((idx, i) => {
     const item = slots[i][idx];
     if (typeof item === 'object' && item.type === 'image') {
@@ -978,7 +981,7 @@ function filterEvents(data) {
 }
 
 function renderSchedule() {
-  const el = document.getElementById('schedule');
+  const el = document.getElementById('schedule-real');
   const all = [...cachedNow, ...cachedUpnext];
   // Deduplicate by id
   const seen = new Set();
