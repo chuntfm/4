@@ -812,36 +812,49 @@ function saveResult() {
   function drawResultText() {
     const y = h / 2 + 40;
     const imgSize = 50;
-    ctx.font = 'bold 36px Bungee, Impact, sans-serif';
+    const spacing = 20;
+    const maxW = w - 80;
+    let fontSize = 36;
 
-    // Measure total width
-    let totalW = 0;
+    // Build display pieces - fall back to text placeholder if image failed
     const pieces = parts.map(p => {
-      if (p.type === 'image') {
-        const pw = p.img ? imgSize * (p.img.width / p.img.height) : imgSize;
-        totalW += pw;
-        return { type: 'image', w: pw };
+      if (p.type === 'image' && p.img) {
+        const pw = imgSize * (p.img.width / p.img.height);
+        return { type: 'image', w: pw, img: p.img };
+      } else if (p.type === 'image') {
+        return { type: 'text', text: '[?]' };
       } else {
-        const tw = ctx.measureText(p.text).width;
-        totalW += tw;
-        return { type: 'text', w: tw, text: p.text };
+        return { type: 'text', text: p.text };
       }
     });
-    const spacing = 15;
-    totalW += spacing * (pieces.length - 1);
 
+    // Measure and scale down if needed
+    function measure() {
+      ctx.font = 'bold ' + fontSize + 'px Bungee, Impact, sans-serif';
+      let total = spacing * (pieces.length - 1);
+      pieces.forEach(p => {
+        if (p.type === 'image') { total += p.w; }
+        else { p.w = ctx.measureText(p.text).width; total += p.w; }
+      });
+      return total;
+    }
+
+    while (measure() > maxW && fontSize > 16) { fontSize -= 2; }
+
+    const totalW = measure();
     let x = (w - totalW) / 2;
-    pieces.forEach((piece, i) => {
+
+    pieces.forEach(piece => {
       if (piece.type === 'text') {
         ctx.fillStyle = '#ff66dd';
-        ctx.font = 'bold 36px Bungee, Impact, sans-serif';
+        ctx.font = 'bold ' + fontSize + 'px Bungee, Impact, sans-serif';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
         ctx.fillText(piece.text, x, y);
-      } else if (parts[i].img) {
+      } else {
         const ih = imgSize;
         const iw = piece.w;
-        ctx.drawImage(parts[i].img, x, y - ih/2, iw, ih);
+        ctx.drawImage(piece.img, x, y - ih/2, iw, ih);
       }
       x += piece.w + spacing;
     });
@@ -868,7 +881,12 @@ function wrapText(ctx, text, x, y, maxW, lineH) {
 
 function downloadCanvas(canvas, parts) {
   const link = document.createElement('a');
-  const name = parts.filter(p => p !== '[img]').join('-').toLowerCase().replace(/[^a-z0-9-]/g, '') || 'chuntfm';
+  const name = parts
+    .filter(p => p.type === 'text')
+    .map(p => p.text)
+    .join('-')
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '') || 'chuntfm';
   link.download = name + '.png';
   link.href = canvas.toDataURL('image/png');
   link.click();
