@@ -547,7 +547,7 @@
 
   <!-- SCHEDULE -->
   <div class="card">
-    <div class="card-label">Schedule</div>
+    <div class="card-label">Schedule <span id="tzLabel"></span></div>
     <div id="schedule">
       <div class="schedule-loading">loading schedule...</div>
     </div>
@@ -1031,6 +1031,12 @@ function escapeHtml(s) {
   div.textContent = s;
   return div.innerHTML;
 }
+
+// Show local timezone
+try {
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  document.getElementById('tzLabel').textContent = '(Your time: ' + tz + ')';
+} catch(e) {}
 
 loadNow();
 loadUpnext();
