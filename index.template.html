@@ -702,6 +702,9 @@ function showResult(indices) {
 initSlots();
 document.getElementById('spinBtn').textContent = buttonLabels[Math.floor(Math.random() * buttonLabels.length)];
 
+// Auto-spin every 33 seconds
+setInterval(() => { if (!spinning) spin(); }, 33000);
+
 // --- SCHEDULE ---
 async function loadSchedule() {
   const el = document.getElementById('schedule');
