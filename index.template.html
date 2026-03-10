@@ -412,6 +412,16 @@
     padding-top: 0;
   }
 
+  @media (max-width: 480px) {
+    .schedule-item {
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+    .schedule-time {
+      min-width: unset;
+    }
+  }
+
   .schedule-loading {
     text-align: center;
     opacity: 0.5;
