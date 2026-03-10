@@ -371,6 +371,15 @@
     -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
   }
 
+  @media (max-width: 480px) {
+    #schedule {
+      height: auto;
+      overflow-y: visible;
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+  }
+
   .schedule-item {
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--card-border);
