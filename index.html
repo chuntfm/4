@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChuntFM - 4 Year Anniversary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne+Tactile&family=Bungee&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffccff;
+    --fg: #1a1a1a;
+    --card-bg: rgba(255, 255, 255, 0.25);
+    --card-border: rgba(0, 0, 0, 0.15);
+    --accent: #ff33cc;
+    --accent2: #cc00ff;
+    --glow: #ff66dd;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a0a1a;
+      --fg: #f0d0f0;
+      --card-bg: rgba(255, 255, 255, 0.06);
+      --card-border: rgba(255, 200, 255, 0.15);
+      --accent: #ff66dd;
+      --accent2: #cc44ff;
+      --glow: #ff33cc;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Floating SVG logos as stars */
+  .floating-logo {
+    position: fixed;
+    opacity: 0.08;
+    pointer-events: none;
+    animation: float-around linear infinite;
+    z-index: 0;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .floating-logo { filter: invert(1); opacity: 0.06; }
+  }
+
+  @keyframes float-around {
+    0% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(180deg); }
+    100% { transform: translateY(0) rotate(360deg); }
+  }
+
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 1rem;
+    position: relative;
+    z-index: 1;
+    min-height: 600px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* SPARKLY HEADER */
+  .header {
+    text-align: center;
+    padding: 1rem 0 0.5rem;
+    position: relative;
+  }
+
+  .header h1 { display: none; }
+
+  .arc-title {
+    width: 100%;
+    max-width: 550px;
+    margin: 0 auto;
+    display: block;
+    overflow: visible;
+  }
+
+  .arc-title text {
+    font-family: 'Syne Tactile', cursive;
+    font-size: 64px;
+    letter-spacing: 0.08em;
+    fill: url(#shimmer-gradient);
+  }
+
+  .arc-title .glow-text {
+    font-family: 'Syne Tactile', cursive;
+    font-size: 64px;
+    letter-spacing: 0.08em;
+    fill: url(#shimmer-gradient);
+    filter: blur(12px);
+    opacity: 0.45;
+  }
+
+  @keyframes shimmer-move {
+    0% { transform: translateX(-200%); }
+    100% { transform: translateX(200%); }
+  }
+
+  .sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--glow);
+    border-radius: 50%;
+    animation: sparkle-fade 1.5s ease-in-out infinite;
+  }
+
+  @keyframes sparkle-fade {
+    0%, 100% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+
+  /* CARDS */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 0.75rem 0;
+    backdrop-filter: blur(10px);
+  }
+
+  .card-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 0.5rem;
+  }
+
+  /* PLAY BUTTON */
+  .player {
+    text-align: center;
+  }
+
+  .play-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 1rem 2.5rem;
+    font-family: inherit;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .play-btn:not(.escaping):hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255, 51, 204, 0.4);
+  }
+
+  .play-btn.escaping {
+    position: fixed;
+    z-index: 200;
+    transition: top 0.15s ease-out, left 0.15s ease-out;
+  }
+
+  .play-btn.playing {
+    background: var(--fg);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .play-btn.playing { background: var(--accent2); }
+  }
+
+  .play-icon {
+    font-size: 1.4rem;
+  }
+
+  .pulse-ring {
+    display: none;
+    width: 12px;
+    height: 12px;
+    background: #ff3333;
+    border-radius: 50%;
+    position: relative;
+  }
+
+  .pulse-ring::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border: 2px solid #ff3333;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-out infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(2); opacity: 0; }
+  }
+
+  .play-btn.playing .pulse-ring { display: block; }
+
+  /* SLOT MACHINE */
+  .slot-machine {
+    text-align: center;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    padding: 1rem;
+    border-radius: 0;
+  }
+
+
+  .slots-display {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin: 0.5rem 0;
+    height: 180px;
+  }
+
+  .slot-window {
+    flex: 1;
+    background: #f5f0e8;
+    border: 3px solid var(--accent);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.1), 0 0 10px rgba(255,51,204,0.15);
+    color: #1a1a1a;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .slot-window { background: #f5f0e8; color: #1a1a1a; }
+  }
+
+  .slot-reel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    transition: transform 0.1s;
+  }
+
+  .slot-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 220px;
+    min-height: 220px;
+    padding: 0.5rem;
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-family: 'Bungee', 'Impact', sans-serif;
+    line-height: 1.1;
+    text-align: center;
+    word-break: break-word;
+  }
+
+  .slot-item img {
+    max-height: 90px;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  .spin-btn {
+    background: rgb(229, 254, 82);
+    color: #1a1a1a;
+    border: none;
+    border-radius: 0;
+    padding: 1.5rem 2rem;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    z-index: 100;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    margin: 0;
+  }
+
+  .spin-btn:hover {
+    background: rgb(210, 240, 60);
+    box-shadow: 0 0 20px rgba(229, 254, 82, 0.4);
+  }
+
+  .spin-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+
+  /* SCHEDULE */
+  .schedule-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .schedule-item:last-child { border-bottom: none; }
+
+  .schedule-time {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    white-space: nowrap;
+    min-width: 100px;
+  }
+
+  .schedule-title {
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .schedule-now {
+    color: var(--accent);
+  }
+
+  .schedule-loading {
+    text-align: center;
+    opacity: 0.5;
+    padding: 0.5rem;
+  }
+
+  /* DAY COUNTER */
+  .counter {
+    text-align: center;
+    padding: 0.5rem 0;
+  }
+
+  .counter-number {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .counter-label {
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+    opacity: 0.8;
+    letter-spacing: 0.1em;
+  }
+
+  /* NUSA CANA FLASH */
+  .flash-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .flash-overlay.visible {
+    opacity: 1;
+  }
+
+  .flash-text {
+    font-size: clamp(2rem, 8vw, 5rem);
+    font-weight: 900;
+    color: #fff;
+    text-shadow:
+      0 0 20px var(--accent),
+      0 0 60px var(--accent2),
+      0 0 100px var(--accent);
+    letter-spacing: 0.1em;
+    text-align: center;
+    transform: rotate(-5deg);
+    animation: flash-shake 0.3s ease-in-out;
+  }
+
+  @keyframes flash-shake {
+    0%, 100% { transform: rotate(-5deg) scale(1); }
+    25% { transform: rotate(-3deg) scale(1.05); }
+    75% { transform: rotate(-7deg) scale(0.98); }
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 0.5rem 0;
+    opacity: 0.4;
+    font-size: 0.75rem;
+  }
+
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating SVG logos scattered like stars -->
+<div id="floating-logos"></div>
+
+<!-- Nusa Cana flash -->
+<div class="flash-overlay" id="flash">
+  <div class="flash-text">PRESENTED BY NUSA CANA</div>
+</div>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header" id="header">
+    <h1>ChuntFM</h1>
+    <svg class="arc-title" viewBox="0 0 500 140" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <path id="arc-path" d="M 30,120 Q 250,30 470,120" fill="none" />
+        <linearGradient id="shimmer-gradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="500" y2="0">
+          <stop offset="0%" stop-color="var(--accent)" />
+          <stop offset="30%" stop-color="var(--accent2)" />
+          <stop offset="50%" stop-color="#ff99ee" />
+          <stop offset="70%" stop-color="var(--accent)" />
+          <stop offset="100%" stop-color="var(--accent2)" />
+          <animateTransform attributeName="gradientTransform" type="translate" from="-500 0" to="500 0" dur="3s" repeatCount="indefinite" />
+        </linearGradient>
+      </defs>
+      <text class="glow-text">
+        <textPath href="#arc-path" startOffset="50%" text-anchor="middle" id="arc-glow-text"></textPath>
+      </text>
+      <text>
+        <textPath href="#arc-path" startOffset="50%" text-anchor="middle" id="arc-main-text"></textPath>
+      </text>
+    </svg>
+  </div>
+
+  <!-- LIVE STREAM -->
+  <div class="player">
+    <button class="play-btn" id="playBtn" onclick="togglePlay()">
+      <span class="play-icon" id="playIcon">&#9654;</span>
+      <span id="playLabel">PLAY</span>
+      <span class="pulse-ring"></span>
+    </button>
+    <audio id="audio" preload="none">
+      <source src="https://api.chunt.org/fm/channels/1/stream/default/play" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <!-- SLOT MACHINE -->
+  <div class="slot-machine">
+    <div class="slots-display" id="slotsDisplay"></div>
+    <button class="spin-btn" id="spinBtn" onclick="spin()">Trouble!</button>
+  </div>
+
+  <!-- SCHEDULE -->
+  <div class="card">
+    <div class="card-label">Schedule</div>
+    <div id="schedule">
+      <div class="schedule-loading">loading schedule...</div>
+    </div>
+  </div>
+
+
+  <div class="footer">
+    <a href="https://chunt.org">chunt.org</a>
+  </div>
+
+</div>
+
+<script>
+// --- CONFIG ---
+const SLOTS_CONFIG = {"slot1":["https://www.chunt.org/images/chuntfm_eye_fixed_wmargin.svg","https://www.rumundco.de/media/f7/bb/62/1675680119/design-ohne-titel-10_6fa8bdcf6229c648.png","https://i.ibb.co/HHXRscw/chabskini.png","https://i.ibb.co/3sTMQGF/chabsromance.png","https://c.tenor.com/P5hUQuAEvPIAAAAi/crazed-dancing-alien-corrupted-dancing-alien.gif","Tantric","Big","Chabs'","Random","Chunty","Legally","#Classic","Bare","Relaxed","Mystery","Champion","Horny","International","Selekta","Biebz","Meaty","Lil","No","Dale's Mum's","DJ","Club","Sonic","Honkin","What A","Unscheduled","Daddy's","http:","Scottie's","Serve","Done-in","Radio"],"slot2":["https://www.chunt.org/images/chuntfm_eye_fixed_wmargin.svg","https://www.rumundco.de/media/f7/bb/62/1675680119/design-ohne-titel-10_6fa8bdcf6229c648.png","https://i.ibb.co/HHXRscw/chabskini.png","https://i.ibb.co/3sTMQGF/chabsromance.png","https://c.tenor.com/P5hUQuAEvPIAAAAi/crazed-dancing-alien-corrupted-dancing-alien.gif","Woated","Yunky","Pingin","Large","Kyrgyz","Goated","Fakkin","Thwompin","Sopping","Clarted","Centrist","????","Chunt","Afta","[X]","Zangalote","CONTENT NOT AVAILABLE IN YOUR REGION","Busty","Minehead","Horny","Skeggy","Feeling","Scally","Broggy","Shaggy","Morning"],"slot3":["https://www.chunt.org/images/chuntfm_eye_fixed_wmargin.svg","https://www.rumundco.de/media/f7/bb/62/1675680119/design-ohne-titel-10_6fa8bdcf6229c648.png","https://i.ibb.co/HHXRscw/chabskini.png","https://i.ibb.co/3sTMQGF/chabsromance.png","https://c.tenor.com/P5hUQuAEvPIAAAAi/crazed-dancing-alien-corrupted-dancing-alien.gif","Tunas","Bjiertes","Bins","Oobz","Yunk","Clart","Gourd","Cum","Wonton","Meppet","Dub Siren","Horse","Chunt","Dark 👌","Steppers","Peanuts","Gifs","Smoke","Plum","Tayyabs","Piss","Beans",".webp",".org","Nats","Sauce"],"button_labels":["Trouble!","Ch-Ch-ChuntFM!","Hit me!","Again!","Spin!"]};
+const STREAM_URL = 'https://api.chunt.org/fm/channels/1/stream/default/play';
+const SCHEDULE_URL = 'https://api.chunt.org/schedule/now';
+const START_DATE = new Date('2022-03-14T00:00:00Z');
+
+// --- FLOATING LOGOS ---
+(function initLogos() {
+  const container = document.getElementById('floating-logos');
+  const count = 15;
+  for (let i = 0; i < count; i++) {
+    const img = document.createElement('img');
+    img.src = 'https://www.chunt.org/images/chuntfm_eye_fixed_wmargin.svg';
+    img.className = 'floating-logo';
+    img.style.width = (15 + Math.random() * 35) + 'px';
+    img.style.left = (Math.random() * 95) + '%';
+    img.style.top = (Math.random() * 95) + '%';
+    img.style.animationDuration = (8 + Math.random() * 12) + 's';
+    img.style.animationDelay = (-Math.random() * 10) + 's';
+    img.setAttribute('aria-hidden', 'true');
+    container.appendChild(img);
+  }
+})();
+
+// --- SPARKLES ---
+(function initSparkles() {
+  const header = document.getElementById('header');
+  for (let i = 0; i < 20; i++) {
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.style.left = (Math.random() * 100) + '%';
+    s.style.top = (Math.random() * 100) + '%';
+    s.style.animationDelay = (Math.random() * 2) + 's';
+    s.style.animationDuration = (1 + Math.random() * 1.5) + 's';
+    header.appendChild(s);
+  }
+})();
+
+// --- AUDIO PLAYER ---
+const audio = document.getElementById('audio');
+const playBtn = document.getElementById('playBtn');
+const playIcon = document.getElementById('playIcon');
+const playLabel = document.getElementById('playLabel');
+let isPlaying = false;
+
+// --- ESCAPE MOUSE (desktop only) ---
+let escaping = false;
+
+playBtn.addEventListener('mouseenter', function() {
+  if (!isPlaying || escaping || window.matchMedia('(pointer: coarse)').matches) return;
+  escaping = true;
+  playBtn.classList.add('escaping');
+
+  const rect = playBtn.getBoundingClientRect();
+  let curX = rect.left;
+  let curY = rect.top;
+  playBtn.style.left = curX + 'px';
+  playBtn.style.top = curY + 'px';
+  playBtn.style.width = rect.width + 'px';
+
+  let dodges = 0;
+  const maxDodges = 4;
+
+  function dodge() {
+    const bw = playBtn.offsetWidth;
+    const bh = playBtn.offsetHeight;
+    // Move 80-150px in a random direction from current position
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 80 + Math.random() * 70;
+    let nx = curX + Math.cos(angle) * dist;
+    let ny = curY + Math.sin(angle) * dist;
+    // Clamp to viewport
+    nx = Math.max(20, Math.min(window.innerWidth - bw - 20, nx));
+    ny = Math.max(20, Math.min(window.innerHeight - bh - 20, ny));
+    curX = nx;
+    curY = ny;
+    playBtn.style.left = nx + 'px';
+    playBtn.style.top = ny + 'px';
+  }
+
+  function onHover() {
+    dodges++;
+    if (dodges < maxDodges) {
+      dodge();
+    } else {
+      stopEscaping();
+    }
+  }
+
+  playBtn.addEventListener('mouseenter', onHover);
+  dodge();
+
+  const timeout = setTimeout(stopEscaping, 2000);
+
+  function stopEscaping() {
+    clearTimeout(timeout);
+    playBtn.removeEventListener('mouseenter', onHover);
+    playBtn.classList.remove('escaping');
+    playBtn.style.left = '';
+    playBtn.style.top = '';
+    playBtn.style.width = '';
+    escaping = false;
+  }
+});
+
+function togglePlay() {
+  if (isPlaying) {
+    audio.pause();
+    audio.src = '';
+    playBtn.classList.remove('playing');
+    playIcon.innerHTML = '&#9654;';
+    playLabel.textContent = 'PLAY';
+    isPlaying = false;
+  } else {
+    audio.src = STREAM_URL;
+    audio.play().catch(() => {});
+    playBtn.classList.add('playing');
+    playIcon.innerHTML = '&#9632;';
+    playLabel.textContent = 'STOP';
+    isPlaying = true;
+  }
+}
+
+// --- SLOT MACHINE ---
+const slots = [SLOTS_CONFIG.slot1, SLOTS_CONFIG.slot2, SLOTS_CONFIG.slot3];
+const buttonLabels = SLOTS_CONFIG.button_labels || ['Trouble!'];
+let spinning = false;
+
+function randomizeButton() {
+  document.getElementById('spinBtn').textContent = buttonLabels[Math.floor(Math.random() * buttonLabels.length)];
+}
+
+function renderSlotItem(item) {
+  if (typeof item === 'object' && item.type === 'image') {
+    return '<img src="' + item.src + '" alt="' + (item.alt || '') + '">';
+  }
+  if (typeof item === 'string' && /\.(svg|png|jpg|jpeg|gif|webp)$/i.test(item)) {
+    return '<img src="' + item + '" alt="">';
+  }
+  return item;
+}
+
+function initSlots() {
+  const display = document.getElementById('slotsDisplay');
+  display.innerHTML = '';
+  slots.forEach((slotItems, i) => {
+    const win = document.createElement('div');
+    win.className = 'slot-window';
+    const reel = document.createElement('div');
+    reel.className = 'slot-reel';
+    reel.id = 'reel' + i;
+    const item = document.createElement('div');
+    item.className = 'slot-item';
+    const randIdx = Math.floor(Math.random() * slotItems.length);
+    item.innerHTML = renderSlotItem(slotItems[randIdx]);
+    item.dataset.index = randIdx;
+    reel.appendChild(item);
+    win.appendChild(reel);
+    display.appendChild(win);
+  });
+}
+
+function spin() {
+  if (spinning) return;
+  spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+
+  const finalIndices = slots.map(s => Math.floor(Math.random() * s.length));
+  const durations = [1200, 1600, 2000];
+
+  slots.forEach((slotItems, i) => {
+    const reel = document.getElementById('reel' + i);
+    let ticks = 0;
+    const totalTicks = Math.floor(durations[i] / 80);
+    const interval = setInterval(() => {
+      ticks++;
+      const idx = (ticks < totalTicks)
+        ? Math.floor(Math.random() * slotItems.length)
+        : finalIndices[i];
+      reel.children[0].innerHTML = renderSlotItem(slotItems[idx]);
+      reel.children[0].dataset.index = idx;
+
+      if (ticks >= totalTicks) {
+        clearInterval(interval);
+        if (i === slots.length - 1) {
+          spinning = false;
+          document.getElementById('spinBtn').disabled = false;
+          randomizeButton();
+          showResult(finalIndices);
+        }
+      }
+    }, 80);
+  });
+}
+
+function showResult(indices) {
+  const schedule = document.getElementById('schedule');
+  const titleHtml = indices.map((idx, i) => {
+    const item = slots[i][idx];
+    if (typeof item === 'object' && item.type === 'image') {
+      return '<img src="' + item.src + '" alt="' + (item.alt || '') + '" style="height:1.2em;vertical-align:middle;">';
+    }
+    if (typeof item === 'string' && /\.(svg|png|jpg|jpeg|gif|webp)$/i.test(item)) {
+      return '<img src="' + item + '" alt="" style="height:1.2em;vertical-align:middle;">';
+    }
+    return item;
+  }).join(' ');
+
+  const fakeShow = document.createElement('div');
+  fakeShow.className = 'schedule-item schedule-now';
+  fakeShow.innerHTML = '<span class="schedule-time">> NOW</span><span class="schedule-title">' + titleHtml + '</span>';
+  schedule.prepend(fakeShow);
+}
+
+initSlots();
+document.getElementById('spinBtn').textContent = buttonLabels[Math.floor(Math.random() * buttonLabels.length)];
+
+// --- SCHEDULE ---
+async function loadSchedule() {
+  const el = document.getElementById('schedule');
+  try {
+    const res = await fetch(SCHEDULE_URL);
+    const data = await res.json();
+
+    // Filter out the chunt4.org anniversary meta-event
+    const events = data.filter(e =>
+      !e.title?.toLowerCase().includes('chunt4.org')
+    );
+
+    if (events.length === 0) {
+      el.innerHTML = '<div class="schedule-loading">no shows scheduled right now</div>';
+      return;
+    }
+
+    const now = new Date();
+    el.innerHTML = events.map(e => {
+      const start = new Date(e.start || e.startTimestampUTC);
+      const stop = new Date(e.stop || e.endTimestampUTC);
+      const isNow = now >= start && now <= stop;
+      const timeStr = formatTime(start) + ' - ' + formatTime(stop);
+      return '<div class="schedule-item' + (isNow ? ' schedule-now' : '') + '">'
+        + '<span class="schedule-time">' + (isNow ? '> ' : '') + timeStr + '</span>'
+        + '<span class="schedule-title">' + escapeHtml(e.title || 'Untitled') + '</span>'
+        + '</div>';
+    }).join('');
+  } catch (err) {
+    el.innerHTML = '<div class="schedule-loading">could not load schedule</div>';
+  }
+}
+
+function formatTime(d) {
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function escapeHtml(s) {
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+loadSchedule();
+setInterval(loadSchedule, 60000);
+
+// --- DAY COUNTER (in header) ---
+function updateCounter() {
+  const now = new Date();
+  const diff = now - START_DATE;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const text = days + 'FM';
+  document.getElementById('arc-main-text').textContent = text;
+  document.getElementById('arc-glow-text').textContent = text;
+}
+updateCounter();
+setInterval(updateCounter, 60000);
+
+// --- NUSA CANA FLASH ---
+(function initFlash() {
+  const flash = document.getElementById('flash');
+  function doFlash() {
+    flash.classList.add('visible');
+    setTimeout(() => flash.classList.remove('visible'), 1500);
+  }
+  // Flash every 30-90 seconds randomly
+  function scheduleFlash() {
+    const delay = 30000 + Math.random() * 60000;
+    setTimeout(() => {
+      doFlash();
+      scheduleFlash();
+    }, delay);
+  }
+  // First flash after 10-20 seconds
+  setTimeout(() => {
+    doFlash();
+    scheduleFlash();
+  }, 10000 + Math.random() * 10000);
+})();
+</script>
+
+</body>
+</html>

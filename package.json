@@ -1,0 +1,12 @@
+{
+  "name": "chunt4",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ChuntFM 4 Year Anniversary static page",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}

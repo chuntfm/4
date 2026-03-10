@@ -1,0 +1,116 @@
+# Slot Machine Configuration
+# Each slot is a list of items. Items can be text or images.
+# For images, use: { type: "image", src: "images/something.png", alt: "description" }
+# For text, just use a string.
+# URLs ending in .svg/.png/.jpg/etc are auto-rendered as images.
+
+slot1:
+  - https://www.chunt.org/images/chuntfm_eye_fixed_wmargin.svg
+  - https://www.rumundco.de/media/f7/bb/62/1675680119/design-ohne-titel-10_6fa8bdcf6229c648.png
+  - https://i.ibb.co/HHXRscw/chabskini.png
+  - https://i.ibb.co/3sTMQGF/chabsromance.png
+  - https://c.tenor.com/P5hUQuAEvPIAAAAi/crazed-dancing-alien-corrupted-dancing-alien.gif
+  - "Tantric"
+  - "Big"
+  - "Chabs'"
+  - "Random"
+  - "Chunty"
+  - "Legally"
+  - "#Classic"
+  - "Bare"
+  - "Relaxed"
+  - "Mystery"
+  - "Champion"
+  - "Horny"
+  - "International"
+  - "Selekta"
+  - "Biebz"
+  - "Meaty"
+  - "Lil"
+  - "No"
+  - "Dale's Mum's"
+  - "DJ"
+  - "Club"
+  - "Sonic"
+  - "Honkin"
+  - "What A"
+  - "Unscheduled"
+  - "Daddy's"
+  - "http:"
+  - "Scottie's"
+  - "Serve"
+  - "Done-in"
+  - "Radio"
+
+slot2:
+  - https://www.chunt.org/images/chuntfm_eye_fixed_wmargin.svg
+  - https://www.rumundco.de/media/f7/bb/62/1675680119/design-ohne-titel-10_6fa8bdcf6229c648.png
+  - https://i.ibb.co/HHXRscw/chabskini.png
+  - https://i.ibb.co/3sTMQGF/chabsromance.png
+  - https://c.tenor.com/P5hUQuAEvPIAAAAi/crazed-dancing-alien-corrupted-dancing-alien.gif
+  - "Woated"
+  - "Yunky"
+  - "Pingin"
+  - "Large"
+  - "Kyrgyz"
+  - "Goated"
+  - "Fakkin"
+  - "Thwompin"
+  - "Sopping"
+  - "Clarted"
+  - "Centrist"
+  - "????"
+  - "Chunt"
+  - "Afta"
+  - "[X]"
+  - "Zangalote"
+  - "CONTENT NOT AVAILABLE IN YOUR REGION"
+  - "Busty"
+  - "Minehead"
+  - "Horny"
+  - "Skeggy"
+  - "Feeling"
+  - "Scally"
+  - "Broggy"
+  - "Shaggy"
+  - "Morning"
+
+slot3:
+  - https://www.chunt.org/images/chuntfm_eye_fixed_wmargin.svg
+  - https://www.rumundco.de/media/f7/bb/62/1675680119/design-ohne-titel-10_6fa8bdcf6229c648.png
+  - https://i.ibb.co/HHXRscw/chabskini.png
+  - https://i.ibb.co/3sTMQGF/chabsromance.png
+  - https://c.tenor.com/P5hUQuAEvPIAAAAi/crazed-dancing-alien-corrupted-dancing-alien.gif
+  - "Tunas"
+  - "Bjiertes"
+  - "Bins"
+  - "Oobz"
+  - "Yunk"
+  - "Clart"
+  - "Gourd"
+  - "Cum"
+  - "Wonton"
+  - "Meppet"
+  - "Dub Siren"
+  - "Horse"
+  - "Chunt"
+  - "Dark 👌"
+  - "Steppers"
+  - "Peanuts"
+  - "Gifs"
+  - "Smoke"
+  - "Plum"
+  - "Tayyabs"
+  - "Piss"
+  - "Beans"
+  - ".webp"
+  - ".org"
+  - "Nats"
+  - "Sauce"
+
+button_labels:
+  - "Trouble!"
+  - "Ch-Ch-ChuntFM!"
+  - "Hit me!"
+  - "Again!"
+  - "Spin!"
