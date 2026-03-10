@@ -550,7 +550,8 @@
 // --- CONFIG ---
 const SLOTS_CONFIG = __SLOTS_CONFIG__;
 const STREAM_URL = 'https://api.chunt.org/fm/channels/1/stream/default/play';
-const SCHEDULE_URL = 'https://api.chunt.org/schedule/now';
+const SCHEDULE_NOW_URL = 'https://api.chunt.org/schedule/now';
+const SCHEDULE_UPNEXT_URL = 'https://api.chunt.org/schedule/upnext';
 const START_DATE = new Date('2022-03-14T00:00:00Z');
 
 // --- FLOATING LOGOS ---
@@ -945,36 +946,56 @@ spin();
 setInterval(() => { if (!spinning) spin(); }, 33000);
 
 // --- SCHEDULE ---
-async function loadSchedule() {
+let cachedNow = [];
+let cachedUpnext = [];
+
+function filterEvents(data) {
+  return data.filter(e => !e.title?.toLowerCase().includes('chunt4.org'));
+}
+
+function renderSchedule() {
   const el = document.getElementById('schedule');
-  try {
-    const res = await fetch(SCHEDULE_URL);
-    const data = await res.json();
+  const all = [...cachedNow, ...cachedUpnext];
+  // Deduplicate by id
+  const seen = new Set();
+  const unique = all.filter(e => {
+    if (seen.has(e.id)) return false;
+    seen.add(e.id);
+    return true;
+  });
 
-    // Filter out the chunt4.org anniversary meta-event
-    const events = data.filter(e =>
-      !e.title?.toLowerCase().includes('chunt4.org')
-    );
-
-    if (events.length === 0) {
-      el.innerHTML = '<div class="schedule-loading">no shows scheduled right now</div>';
-      return;
-    }
-
-    const now = new Date();
-    el.innerHTML = events.map(e => {
-      const start = new Date(e.start || e.startTimestampUTC);
-      const stop = new Date(e.stop || e.endTimestampUTC);
-      const isNow = now >= start && now <= stop;
-      const timeStr = formatTime(start) + ' - ' + formatTime(stop);
-      return '<div class="schedule-item' + (isNow ? ' schedule-now' : '') + '">'
-        + '<span class="schedule-time">' + (isNow ? '> ' : '') + timeStr + '</span>'
-        + '<span class="schedule-title">' + escapeHtml(e.title || 'Untitled') + '</span>'
-        + '</div>';
-    }).join('');
-  } catch (err) {
-    el.innerHTML = '<div class="schedule-loading">could not load schedule</div>';
+  if (unique.length === 0) {
+    el.innerHTML = '<div class="schedule-loading">no shows scheduled right now</div>';
+    return;
   }
+
+  const now = new Date();
+  el.innerHTML = unique.map(e => {
+    const start = new Date(e.start || e.startTimestampUTC);
+    const stop = new Date(e.stop || e.endTimestampUTC);
+    const isNow = now >= start && now <= stop;
+    const timeStr = formatTime(start) + ' - ' + formatTime(stop);
+    return '<div class="schedule-item' + (isNow ? ' schedule-now' : '') + '">'
+      + '<span class="schedule-time">' + (isNow ? '> ' : '') + timeStr + '</span>'
+      + '<span class="schedule-title">' + escapeHtml(e.title || 'Untitled') + '</span>'
+      + '</div>';
+  }).join('');
+}
+
+async function loadNow() {
+  try {
+    const res = await fetch(SCHEDULE_NOW_URL);
+    cachedNow = filterEvents(await res.json());
+    renderSchedule();
+  } catch (err) {}
+}
+
+async function loadUpnext() {
+  try {
+    const res = await fetch(SCHEDULE_UPNEXT_URL);
+    cachedUpnext = filterEvents(await res.json());
+    renderSchedule();
+  } catch (err) {}
 }
 
 function formatTime(d) {
@@ -987,8 +1008,10 @@ function escapeHtml(s) {
   return div.innerHTML;
 }
 
-loadSchedule();
-setInterval(loadSchedule, 60000);
+loadNow();
+loadUpnext();
+setInterval(loadNow, 30000);
+setInterval(loadUpnext, 120000);
 
 // --- DAY COUNTER (in header) ---
 function updateCounter() {
