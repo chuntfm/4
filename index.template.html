@@ -90,7 +90,7 @@
     max-width: 550px;
     margin: 0 auto;
     display: block;
-    overflow: visible;
+    overflow: hidden;
   }
 
   .arc-title text {
@@ -425,6 +425,19 @@
   }
 
   @media (max-width: 480px) {
+    body {
+      font-size: 1.1rem;
+    }
+
+    .slot-item {
+      font-size: clamp(1.2rem, 4vw, 2.5rem);
+    }
+
+    .play-btn, .chat-btn {
+      font-size: 1rem;
+      padding: 0.8rem 1.5rem;
+    }
+
     .schedule-item {
       flex-direction: column;
       gap: 0.1rem;
@@ -526,7 +539,7 @@
   <!-- HEADER -->
   <div class="header" id="header">
     <h1>ChuntFM</h1>
-    <svg class="arc-title" viewBox="0 0 500 140" xmlns="http://www.w3.org/2000/svg">
+    <svg class="arc-title" viewBox="-20 0 540 140" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <path id="arc-path" d="M 30,120 Q 250,30 470,120" fill="none" />
         <linearGradient id="shimmer-gradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="500" y2="0">
