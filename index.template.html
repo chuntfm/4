@@ -310,7 +310,7 @@
   }
 
   .save-btn {
-    display: none;
+    visibility: hidden;
     background: none;
     border: 1px solid var(--card-border);
     color: var(--fg);
@@ -715,7 +715,7 @@ let lastResult = [];
 
 function showResult(indices) {
   lastResult = indices;
-  document.getElementById('saveBtn').style.display = 'block';
+  document.getElementById('saveBtn').style.visibility = 'visible';
 
   const schedule = document.getElementById('schedule');
   const titleHtml = indices.map((idx, i) => {
