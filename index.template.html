@@ -398,6 +398,20 @@
     color: var(--accent);
   }
 
+  .schedule-day {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    padding: 0.5rem 0 0.2rem;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .schedule-day:first-child {
+    padding-top: 0;
+  }
+
   .schedule-loading {
     text-align: center;
     opacity: 0.5;
@@ -970,17 +984,26 @@ function renderSchedule() {
   }
 
   const now = new Date();
-  el.innerHTML = unique.map(e => {
+  let lastDay = '';
+  let html = '';
+  unique.forEach(e => {
     const start = new Date(e.start || e.startTimestampUTC);
     const stop = new Date(e.stop || e.endTimestampUTC);
     const isNow = now >= start && now <= stop;
     const dayStr = start.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
     const timeStr = formatTime(start) + ' - ' + formatTime(stop);
-    return '<div class="schedule-item' + (isNow ? ' schedule-now' : '') + '">'
-      + '<span class="schedule-time">' + (isNow ? '> NOW ' : dayStr + ' ') + timeStr + '</span>'
+
+    if (dayStr !== lastDay) {
+      html += '<div class="schedule-day">' + dayStr + '</div>';
+      lastDay = dayStr;
+    }
+
+    html += '<div class="schedule-item' + (isNow ? ' schedule-now' : '') + '">'
+      + '<span class="schedule-time">' + (isNow ? '> ' : '') + timeStr + '</span>'
       + '<span class="schedule-title">' + escapeHtml(e.title || 'Untitled') + '</span>'
       + '</div>';
-  }).join('');
+  });
+  el.innerHTML = html;
 }
 
 async function loadNow() {
