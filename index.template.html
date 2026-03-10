@@ -863,7 +863,7 @@ function saveResult() {
         const logoW = logoH * (logo.width / logo.height);
         ctx.shadowColor = '#e5fe52';
         ctx.shadowBlur = 12;
-        ctx.drawImage(logo, (w - logoW)/2, y + 40, logoW, logoH);
+        ctx.drawImage(logo, (w - logoW)/2, h - logoH - 30, logoW, logoH);
         ctx.shadowBlur = 0;
       }
 
