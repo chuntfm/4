@@ -287,17 +287,14 @@
     color: #1a1a1a;
     border: none;
     border-radius: 0;
-    padding: 1.5rem 2rem;
+    padding: 1rem 2rem;
     font-family: inherit;
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
     letter-spacing: 0.1em;
     z-index: 100;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100vw;
+    width: 100%;
     margin: 0;
   }
 
@@ -327,7 +324,7 @@
     letter-spacing: 0.05em;
     margin-top: 0.5rem;
     opacity: 0.6;
-    align-self: flex-end;
+    margin-bottom: 0.5rem;
   }
 
   .save-btn:hover {
@@ -500,7 +497,6 @@
   <div class="slot-machine">
     <div class="slots-display" id="slotsDisplay"></div>
     <button class="spin-btn" id="spinBtn" onclick="spin()">Trouble!</button>
-    <button class="save-btn" id="saveBtn" onclick="saveResult()">SAVE</button>
   </div>
 
   <!-- SCHEDULE -->
@@ -513,6 +509,7 @@
 
 
   <div class="footer">
+    <button class="save-btn" id="saveBtn" onclick="saveResult()">SAVE</button>
     <a href="https://chunt.org">chunt.org</a>
   </div>
 
