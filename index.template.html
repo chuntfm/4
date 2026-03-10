@@ -770,12 +770,16 @@ function saveResult() {
   ctx.font = '40px Syne Tactile, cursive';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
+  ctx.shadowColor = '#ff33cc';
+  ctx.shadowBlur = 20;
   ctx.fillText('ChuntFM', w/2, 30);
 
   // Subheader
   ctx.fillStyle = 'rgba(255,51,204,0.5)';
   ctx.font = '16px monospace';
+  ctx.shadowBlur = 10;
   ctx.fillText('4 years of chunt', w/2, 80);
+  ctx.shadowBlur = 0;
 
   // Watermark
   ctx.fillStyle = 'rgba(255,51,204,0.3)';
@@ -790,7 +794,10 @@ function saveResult() {
     const logoH = 60;
     const logoW = logoH * (logo.width / logo.height);
     const logoY = 80 + (resultY - 80 - logoH) / 2;
+    ctx.shadowColor = '#ff33cc';
+    ctx.shadowBlur = 15;
     ctx.drawImage(logo, (w - logoW)/2, logoY, logoW, logoH);
+    ctx.shadowBlur = 0;
     drawResultText();
     downloadCanvas(canvas, parts);
   };
@@ -841,7 +848,10 @@ function saveResult() {
         ctx.font = 'bold ' + fontSize + 'px Bungee, Impact, sans-serif';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
+        ctx.shadowColor = '#ff33cc';
+        ctx.shadowBlur = 15;
         ctx.fillText(piece.text, x, y);
+        ctx.shadowBlur = 0;
       } else {
         const ih = imgSize;
         const iw = piece.w;
