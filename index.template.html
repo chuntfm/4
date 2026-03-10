@@ -782,10 +782,20 @@ function saveResult() {
   ctx.textAlign = 'right';
   ctx.fillText('chuntfm.github.io/4', w - 20, h - 20);
 
-  // Skip loading external images to avoid CORS tainting the canvas
-  // Just render text parts
-  drawResultText();
-  downloadCanvas(canvas, parts);
+  // Load logo from embedded data URL (avoids CORS)
+  const logo = new Image();
+  logo.onload = function() {
+    const logoH = 60;
+    const logoW = logoH * (logo.width / logo.height);
+    ctx.drawImage(logo, (w - logoW)/2, 100, logoW, logoH);
+    drawResultText();
+    downloadCanvas(canvas, parts);
+  };
+  logo.onerror = function() {
+    drawResultText();
+    downloadCanvas(canvas, parts);
+  };
+  logo.src = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2aWV3Qm94PSI5OS45NzQgMTM3LjU4OCA3NDQuMzc5IDU5Ni43OTIiIHdpZHRoPSI3MzcuNTgzIiBoZWlnaHQ9IjU4Mi43ODciIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMTAwIDEwMCA3MDAgNzAwOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+Cgkuc3Qwe3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjcyMTU7c3Ryb2tlLW1pdGVybGltaXQ6MTA7fQo8L3N0eWxlPgogIDwvZGVmcz4KICA8cGF0aCBjbGFzcz0ic3QwIiBkPSJNIDQ3Mi4xNyAxNDUuNTYxIEMgMzE1LjU0IDE0NS41NjEgMTc4Ljc5IDI2MS45OTEgMTA1LjYzIDQzNS4wMzEgQyAxMjcuMzIgNDg2LjMyMSAxNTQuNTkgNTMyLjYzMSAxODYuMyA1NzIuNDExIEwgMTg2LjMgNDM1LjAzMSBDIDIyMS45OCA0MzUuMDMxIDI1MC45MSA0NjMuOTYxIDI1MC45MSA0OTkuNjQxIEwgMjUwLjkxIDYzOS4xNDEgQyAyNTkuNzUgNjQ2LjU3MSAyNjguODEgNjUzLjU3MSAyNzguMDYgNjYwLjExMSBMIDI3OC4wNiA0MzUuMDMxIEMgMzEzLjc0IDQzNS4wMzEgMzQyLjY3IDQ2My45NjEgMzQyLjY3IDQ5OS42NDEgTCAzNDIuNjcgNjk2Ljg3MSBDIDM1MS45IDcwMC45MzEgMzYxLjI4IDcwNC41NzEgMzcwLjc3IDcwNy43NjEgTCAzNzAuNzcgNTQ5Ljg4MSBDIDQwNi40NSA1NDkuODgxIDQzNS4zOCA1NzguODExIDQzNS4zOCA2MTQuNDkxIEwgNDM1LjM4IDcyMi4zNDEgQyA0NDcuNSA3MjMuNzcxIDQ1OS43NyA3MjQuNTAxIDQ3Mi4xNyA3MjQuNTAxIEMgNjI4LjggNzI0LjUwMSA3NjUuNTUgNjA4LjA3MSA4MzguNzEgNDM1LjAzMSBDIDc2NS41NSAyNjEuOTkxIDYyOC44IDE0NS41NjEgNDcyLjE3IDE0NS41NjEgWiBNIDY0NS43MiA1NTguMTkxIEMgNTc3LjcgNTU4LjE5MSA1MjIuNTYgNTAzLjA1MSA1MjIuNTYgNDM1LjAzMSBDIDUyMi41NiAzNjcuMDExIDU3Ny43IDMxMS44NzEgNjQ1LjcyIDMxMS44NzEgQyA3MTMuNzQgMzExLjg3MSA3NjguODggMzY3LjAxMSA3NjguODggNDM1LjAzMSBDIDc2OC44OCA1MDMuMDUxIDcxMy43MyA1NTguMTkxIDY0NS43MiA1NTguMTkxIFoiLz4KPC9zdmc+';
 
   function drawResultText() {
     const y = h / 2 + 40;
