@@ -312,6 +312,30 @@
     transform: none;
   }
 
+  .save-btn {
+    display: none;
+    position: fixed;
+    bottom: 60px;
+    right: 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--fg);
+    border-radius: 50px;
+    padding: 0.5rem 1.2rem;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    letter-spacing: 0.05em;
+  }
+
+  .save-btn:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+
 
   /* SCHEDULE */
   #schedule {
@@ -478,6 +502,7 @@
     <div class="slots-display" id="slotsDisplay"></div>
     <button class="spin-btn" id="spinBtn" onclick="spin()">Trouble!</button>
   </div>
+  <button class="save-btn" id="saveBtn" onclick="saveResult()">SAVE</button>
 
   <!-- SCHEDULE -->
   <div class="card">
@@ -690,7 +715,12 @@ function spin() {
   });
 }
 
+let lastResult = [];
+
 function showResult(indices) {
+  lastResult = indices;
+  document.getElementById('saveBtn').style.display = 'block';
+
   const schedule = document.getElementById('schedule');
   const titleHtml = indices.map((idx, i) => {
     const item = slots[i][idx];
@@ -707,6 +737,120 @@ function showResult(indices) {
   fakeShow.className = 'schedule-item schedule-now';
   fakeShow.innerHTML = '<span class="schedule-time">> NOW</span><span class="schedule-title">' + titleHtml + '</span>';
   schedule.prepend(fakeShow);
+}
+
+function saveResult() {
+  const canvas = document.createElement('canvas');
+  const w = 800, h = 400;
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#1a0a1a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Slot backgrounds
+  const slotW = 220, slotH = 200, gap = 20;
+  const startX = (w - (slotW * 3 + gap * 2)) / 2;
+  const slotY = 100;
+
+  const parts = [];
+  const imageSlots = [];
+
+  lastResult.forEach((idx, i) => {
+    const x = startX + i * (slotW + gap);
+    ctx.fillStyle = '#f5f0e8';
+    ctx.roundRect(x, slotY, slotW, slotH, 12);
+    ctx.fill();
+
+    const item = slots[i][idx];
+    const isImg = (typeof item === 'object' && item.type === 'image') ||
+      (typeof item === 'string' && /\.(svg|png|jpg|jpeg|gif|webp)$/i.test(item));
+
+    if (isImg) {
+      const src = typeof item === 'object' ? item.src : item;
+      imageSlots.push({ src, x, slotW, slotY, slotH, i });
+      parts.push('[img]');
+    } else {
+      ctx.fillStyle = '#1a1a1a';
+      ctx.font = 'bold 28px Bungee, Impact, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const text = typeof item === 'object' ? (item.alt || '?') : item;
+      parts.push(text);
+      // Word wrap inside slot
+      wrapText(ctx, text, x + slotW/2, slotY + slotH/2, slotW - 20, 34);
+    }
+  });
+
+  // Header
+  ctx.fillStyle = '#ff33cc';
+  ctx.font = '24px Syne Tactile, cursive';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText('ChuntFM', w/2, 20);
+
+  // Watermark
+  ctx.fillStyle = 'rgba(255,51,204,0.3)';
+  ctx.font = '14px monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('chuntfm.github.io/4', w - 20, h - 20);
+
+  // Bottom text: combined name
+  const nameText = parts.filter(p => p !== '[img]').join(' ');
+  if (nameText) {
+    ctx.fillStyle = '#ff66dd';
+    ctx.font = 'bold 20px Bungee, Impact, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(nameText, w/2, slotY + slotH + 30);
+  }
+
+  // Load images then export
+  if (imageSlots.length > 0) {
+    let loaded = 0;
+    imageSlots.forEach(s => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        const scale = Math.min((s.slotW - 20) / img.width, (s.slotH - 20) / img.height);
+        const iw = img.width * scale, ih = img.height * scale;
+        ctx.drawImage(img, s.x + (s.slotW - iw)/2, s.slotY + (s.slotH - ih)/2, iw, ih);
+        loaded++;
+        if (loaded === imageSlots.length) downloadCanvas(canvas, parts);
+      };
+      img.onerror = () => { loaded++; if (loaded === imageSlots.length) downloadCanvas(canvas, parts); };
+      img.src = s.src;
+    });
+  } else {
+    downloadCanvas(canvas, parts);
+  }
+}
+
+function wrapText(ctx, text, x, y, maxW, lineH) {
+  const words = text.split(' ');
+  let line = '';
+  const lines = [];
+  for (const word of words) {
+    const test = line ? line + ' ' + word : word;
+    if (ctx.measureText(test).width > maxW && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  }
+  lines.push(line);
+  const startY = y - (lines.length - 1) * lineH / 2;
+  lines.forEach((l, i) => ctx.fillText(l, x, startY + i * lineH));
+}
+
+function downloadCanvas(canvas, parts) {
+  const link = document.createElement('a');
+  const name = parts.filter(p => p !== '[img]').join('-').toLowerCase().replace(/[^a-z0-9-]/g, '') || 'chuntfm';
+  link.download = name + '.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
 }
 
 initSlots();
