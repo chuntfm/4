@@ -736,7 +736,7 @@ function renderSlotItem(item) {
   if (typeof item === 'object' && item.type === 'image') {
     return '<img src="' + item.src + '" alt="' + (item.alt || '') + '">';
   }
-  if (typeof item === 'string' && /\.(svg|png|jpg|jpeg|gif|webp)$/i.test(item)) {
+  if (typeof item === 'string' && /^(https?:\/\/|images\/)/.test(item) && /\.(svg|png|jpg|jpeg|gif|webp)$/i.test(item)) {
     return '<img src="' + item + '" alt="">';
   }
   return item;
@@ -807,7 +807,7 @@ function showResult(indices) {
     if (typeof item === 'object' && item.type === 'image') {
       return '<img src="' + item.src + '" alt="' + (item.alt || '') + '" style="height:1.2em;vertical-align:middle;">';
     }
-    if (typeof item === 'string' && /\.(svg|png|jpg|jpeg|gif|webp)$/i.test(item)) {
+    if (typeof item === 'string' && /^(https?:\/\/|images\/)/.test(item) && /\.(svg|png|jpg|jpeg|gif|webp)$/i.test(item)) {
       return '<img src="' + item + '" alt="" style="height:1.2em;vertical-align:middle;">';
     }
     return item;
