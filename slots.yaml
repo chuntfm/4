@@ -1,3 +1,6 @@
+# Assets URL: empty = local paths, set to "https://assets.chunt.org" in CI
+assets_url: ""
+
 # Slot Machine Configuration
 # Each slot is a list of items. Items can be text or images.
 # For images, use: { type: "image", src: "images/something.png", alt: "description" }

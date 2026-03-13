@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ChuntFM - 4 Year Anniversary</title>
-<link rel="apple-touch-icon" sizes="180x180" href="https://www.chunt.org/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://www.chunt.org/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="https://www.chunt.org/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="__ASSETS_URL__/images/web/favicons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="__ASSETS_URL__/images/web/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="__ASSETS_URL__/images/web/favicons/favicon-16x16.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne+Tactile&family=Bungee&display=swap" rel="stylesheet">
@@ -350,7 +350,8 @@
     font-size: 0.75rem;
     font-weight: 700;
     cursor: pointer;
-    z-index: 100;
+    z-index: 10002;
+    position: relative;
     letter-spacing: 0.05em;
     margin-top: 0.5rem;
     opacity: 0.85;
@@ -510,6 +511,56 @@
     75% { transform: rotate(-7deg) scale(0.98); }
   }
 
+  /* JACKPOT */
+  .jackpot-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .jackpot-text a {
+    pointer-events: auto;
+  }
+
+  .jackpot-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-5deg);
+    font-family: 'Bungee', 'Impact', sans-serif;
+    font-size: clamp(1.5rem, 6vw, 3.5rem);
+    color: #ff33cc;
+    text-shadow:
+      0 0 20px #ff33cc,
+      0 0 60px #cc00ff,
+      0 0 100px #ff33cc;
+    text-align: center;
+    z-index: 10001;
+    animation: jackpot-pulse 0.5s ease-in-out infinite alternate;
+    white-space: nowrap;
+  }
+
+  @keyframes jackpot-pulse {
+    0% { transform: translate(-50%, -50%) rotate(-5deg) scale(1); }
+    100% { transform: translate(-50%, -50%) rotate(-3deg) scale(1.08); }
+  }
+
+  .fish-drop {
+    position: absolute;
+    top: -60px;
+    width: 40px;
+    height: 40px;
+    animation: fish-fall linear infinite;
+    opacity: 0.8;
+  }
+
+  @keyframes fish-fall {
+    0% { transform: translateY(-60px) rotate(0deg); }
+    100% { transform: translateY(calc(100vh + 80px)) rotate(720deg); }
+  }
+
   /* FOOTER */
   .footer {
     text-align: center;
@@ -600,6 +651,7 @@
 
 <script>
 // --- CONFIG ---
+const ASSETS_URL = '__ASSETS_URL__';
 const SLOTS_CONFIG = __SLOTS_CONFIG__;
 const STREAM_URL = 'https://api.chunt.org/fm/channels/1/stream/default/play';
 const SCHEDULE_NOW_URL = 'https://api.chunt.org/schedule/now';
@@ -612,7 +664,7 @@ const START_DATE = new Date('2022-03-14T00:00:00Z');
   const count = 15;
   for (let i = 0; i < count; i++) {
     const img = document.createElement('img');
-    img.src = 'https://www.chunt.org/images/chuntfm_eye_fixed_wmargin.svg';
+    img.src = ASSETS_URL + '/images/web/logos/chuntfm_eye_fixed_wmargin.svg';
     img.className = 'floating-logo';
     img.style.width = (15 + Math.random() * 35) + 'px';
     img.style.left = (Math.random() * 95) + '%';
@@ -727,6 +779,7 @@ function togglePlay() {
 const slots = [SLOTS_CONFIG.slot1, SLOTS_CONFIG.slot2, SLOTS_CONFIG.slot3];
 const buttonLabels = SLOTS_CONFIG.button_labels || ['Trouble!'];
 let spinning = false;
+let jackpotHit = false;
 
 function randomizeButton() {
   document.getElementById('spinBtn').textContent = buttonLabels[Math.floor(Math.random() * buttonLabels.length)];
@@ -763,7 +816,7 @@ function initSlots() {
 }
 
 function spin() {
-  if (spinning) return;
+  if (spinning || jackpotHit) return;
   spinning = true;
   document.getElementById('spinBtn').disabled = true;
 
@@ -789,6 +842,7 @@ function spin() {
           document.getElementById('spinBtn').disabled = false;
           randomizeButton();
           showResult(finalIndices);
+          resetAutoSpin();
         }
       }
     }, 80);
@@ -817,6 +871,46 @@ function showResult(indices) {
   fakeShow.className = 'schedule-item schedule-now';
   fakeShow.innerHTML = '<span class="schedule-time">> NOW</span><span class="schedule-title">' + titleHtml + '</span>';
   schedule.prepend(fakeShow);
+
+  // Jackpot: all three slots are chabs or alien images
+  const jackpotPattern = /chabskini|chabsromance|alien/i;
+  const allJackpot = indices.every((idx, i) => {
+    const item = slots[i][idx];
+    const src = typeof item === 'string' ? item : (item.src || '');
+    return jackpotPattern.test(src);
+  });
+  if (allJackpot) triggerJackpot();
+}
+
+function triggerJackpot() {
+  jackpotHit = true;
+  clearTimeout(autoSpinTimer);
+  document.getElementById('spinBtn').disabled = true;
+  const overlay = document.createElement('div');
+  overlay.className = 'jackpot-overlay';
+
+  // Win text
+  const text = document.createElement('div');
+  text.className = 'jackpot-text';
+  text.innerHTML = 'NUSA CANA PRESENTS: YOU! WIN!<br><a href="https://chuntoo.chatango.com" target="_blank" rel="noopener noreferrer" style="font-size:0.5em;color:#ff99ee;text-decoration:underline;">claim prize here: chuntoo.chatango.com</a>';
+  overlay.appendChild(text);
+
+  // Fish rain (inline SVG so we can color it pink directly)
+  const fishCount = 40;
+  const fishSvg = '<svg viewBox="99 137 745 597" xmlns="http://www.w3.org/2000/svg"><path fill="#ff33cc" d="M 472.17 145.561 C 315.54 145.561 178.79 261.991 105.63 435.031 C 127.32 486.321 154.59 532.631 186.3 572.411 L 186.3 435.031 C 221.98 435.031 250.91 463.961 250.91 499.641 L 250.91 639.141 C 259.75 646.571 268.81 653.571 278.06 660.111 L 278.06 435.031 C 313.74 435.031 342.67 463.961 342.67 499.641 L 342.67 696.871 C 351.9 700.931 361.28 704.571 370.77 707.761 L 370.77 549.881 C 406.45 549.881 435.38 578.811 435.38 614.491 L 435.38 722.341 C 447.5 723.771 459.77 724.501 472.17 724.501 C 628.8 724.501 765.55 608.071 838.71 435.031 C 765.55 261.991 628.8 145.561 472.17 145.561 Z M 645.72 558.191 C 577.7 558.191 522.56 503.051 522.56 435.031 C 522.56 367.011 577.7 311.871 645.72 311.871 C 713.74 311.871 768.88 367.011 768.88 435.031 C 768.88 503.051 713.73 558.191 645.72 558.191 Z"/></svg>';
+  const fishDataUrl = 'data:image/svg+xml;base64,' + btoa(fishSvg);
+  for (let i = 0; i < fishCount; i++) {
+    const fish = document.createElement('img');
+    fish.src = fishDataUrl;
+    fish.className = 'fish-drop';
+    fish.style.left = (Math.random() * 100) + '%';
+    fish.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+    fish.style.animationDelay = (Math.random() * 3) + 's';
+    fish.style.width = (25 + Math.random() * 30) + 'px';
+    overlay.appendChild(fish);
+  }
+
+  document.body.appendChild(overlay);
 }
 
 function saveResult() {
@@ -976,26 +1070,34 @@ function wrapText(ctx, text, x, y, maxW, lineH) {
 }
 
 function downloadCanvas(canvas, parts) {
-  const link = document.createElement('a');
-  const name = parts
-    .filter(p => p.type === 'text')
-    .map(p => p.text)
-    .join('-')
-    .toLowerCase()
-    .replace(/[^a-z0-9-]/g, '') || 'chuntfm';
-  link.download = name + '.png';
-  link.href = canvas.toDataURL('image/png');
-  link.click();
+  try {
+    const link = document.createElement('a');
+    const name = parts
+      .filter(p => p.type === 'text')
+      .map(p => p.text)
+      .join('-')
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '') || 'chuntfm';
+    link.download = name + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (e) {
+    alert('Save works when served over HTTP. Try: npx serve .');
+  }
 }
 
 initSlots();
 document.getElementById('spinBtn').textContent = buttonLabels[Math.floor(Math.random() * buttonLabels.length)];
 
-// Initial wild spin on page load
-spin();
+// Auto-spin: 60s after the last spin (manual or automatic), reset on each spin
+let autoSpinTimer = null;
+function resetAutoSpin() {
+  clearTimeout(autoSpinTimer);
+  autoSpinTimer = setTimeout(() => { if (!spinning) spin(); }, 60000);
+}
 
-// Auto-spin every 33 seconds
-setInterval(() => { if (!spinning) spin(); }, 33000);
+// Initial spin on page load
+spin();
 
 // --- SCHEDULE ---
 let cachedNow = [];

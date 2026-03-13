@@ -30,6 +30,8 @@ jobs:
       - run: npm ci
 
       - run: npm run build
+        env:
+          ASSETS_URL: ${{ vars.ASSETS_URL }}
 
       - uses: actions/configure-pages@v5
 
